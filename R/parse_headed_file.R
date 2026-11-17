@@ -1,4 +1,4 @@
-.parse.headed.file <- function(fp){
+.parse.headed.file <- function(fp) {
   txt <- readChar(fp, file.info(fp)$size)
   lines <- stringr::str_split_fixed(txt, "\r\n", 12)
   attributes <- lines[1:11] |>

@@ -1,26 +1,27 @@
-read_config <- function(fp){
-  raw <- read.csv(fp)
+read_config <- function(fp) {
+  cfg <- readChar(fp, file.info(fp)$size)
+  lines <- stringr::str_split_fixed(cfg, "\r\n", 9)
 
-  attributes <- raw[1:7,1]
-  attributes <- lapply(attributes, stringr::str_split_fixed, pattern=":", n = 2) |>
+  .convert_value <- function(x) {
+    num <- suppressWarnings(as.numeric(x))
+
+    if (is.na(num)) x else num
+  }
+
+  meta <- lines[1:8] |>
+    lapply(\(x) stringr::str_split(x, ":")) |>
+    unlist(recursive = FALSE) |>
     lapply(trimws)
 
-  output <- list()
-  output$mn <- attributes[[1]][2]
-  output$date <- attributes[[2]][2]
-  output$length <- attributes[[3]][2] |> as.numeric()
-  output$width <- attributes[[4]][2] |> as.numeric()
-  output$x_offset <- attributes[[5]][2] |> as.numeric()
-  output$y_offset <- attributes[[6]][2] |> as.numeric()
-  output$z_offset <- attributes[[7]][2] |> as.numeric()
+  output <- setNames(
+    lapply(meta, function(x) .convert_value(x[2])),
+    sapply(meta, `[`, 1)
+  )
 
+  output$S <- lines[9] |>
+    gsub("COEFFROW[0-9]:", "", x = _) |>
+    read.table(text = _, sep = ",")
+  names(output$S) <- paste0("S", 1:8)
 
-  S <- raw[8:13,2:ncol(raw)]
-  rownames(S) <- 1:nrow(S)
-  colnames(S) <- 1:ncol(S)
-
-  output$S <- S
-
-  class(output) <- "force_plate_cfg"
   return(output)
 }

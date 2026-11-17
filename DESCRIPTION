@@ -1,20 +1,18 @@
-Package: ForcePlatteR
 Type: Package
+Package: ForcePlatteR
 Title: What the Package Does (Title Case)
 Version: 0.1.0
-Authors@R: c(
-    person(
-      "Chance", "Rankin",
-      email = "cranki11@vols.utk.edu",
-      role = c("aut", "cre")
-    )
-  )
-Description: More about what it does (maybe more than one line).
-    Continuation lines should be indented.
+Authors@R: 
+    person("Chance", "Rankin", , "cranki11@vols.utk.edu", role = c("aut", "cre"))
+Description: Package for dealing with Force Plate data in the Granatosky
+    lab (University of Tennessee Knoxville).
 License: What license is it under?
+Imports: 
+    glue,
+    stringr
+Suggests:
+    htmlwidgets,
+    plotly,
+    shiny
 Encoding: UTF-8
 LazyData: true
-Imports: 
-  stringr,
-  glue
-  
