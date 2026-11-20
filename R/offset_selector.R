@@ -81,6 +81,10 @@ select_offsets <- function(data, x, y,
         )
       ),
       shiny::mainPanel(
+        "Please select the range of points that will serve as the offset value.
+Either click on the start and end points (later clicks will update the nearest
+point) or highlight an area. Use the buttons to the left to select mode.",
+        shiny::hr(),
         plotly::plotlyOutput(
           outputId = "plot",
           height = "600px"
@@ -223,7 +227,8 @@ select_offsets <- function(data, x, y,
       } else {
         cat("Lower:", offsets[1], "\n")
         cat("Upper:", offsets[2], "\n")
-        cat("Width:", diff(offsets))
+        cat("Width:", diff(offsets), "\n")
+        # cat("Offset:", mean(data[data$Time>offsets[1] & data$Time<offsets[2],]))
       }
     })
 
