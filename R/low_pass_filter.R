@@ -1,4 +1,4 @@
-low_pass_fourier <- function(time,x,cutoff=10){
+low_pass_fourier <- function(time,x,cutoff=60){
   X <- fft(as.vector(x))
   N <- length(time)
   f = 1 / (time[2] - time[1])
@@ -10,7 +10,11 @@ low_pass_fourier <- function(time,x,cutoff=10){
     }
   }
 
-  output <- Re(fft(X, inverse = TRUE))
+  output <- list(
+    data = Re(fft(X, inverse = TRUE)) / length(X),
+    cutoff = cutoff
+    )
+  class(output) <- 'fft_filtered'
 
   return(output)
 }
@@ -32,4 +36,8 @@ low_pass_fourier.df(df, cutoff){
   }
 
   df <- cbind(Time = time, mvfft(m, inverse = TRUE))
+}
+
+plot.fft_filtered <- function(output) {
+  plot(output$data, type='l', main = glue::glue("cutoff={output$cutoff}"))
 }
