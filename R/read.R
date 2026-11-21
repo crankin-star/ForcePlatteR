@@ -51,7 +51,32 @@ read_au2 <- function(fp, n_channel = 8, write_data = FALSE) {
   return(output)
 }
 
+#' Nice printing for au2 objects
+#' @exportS3Method base::print
+print.au2 <- function(x, ...) {
+  print(glue::glue(
+    "Force plate data with {x$`Number of Channels`} channels\n"
+  ))
+
+  df <- x$data
+  names(df) <- c("Time", paste0(x$Label, "(", x$Units, ")"))
+  print(head(df))
+
+  print(
+    glue::glue(
+      "Scan rate: {x$`Scan Rate`}\tScans per Frame:{x$`Scans Per Frame`}\tTotal scans: {x$`Total Scans`}"
+    )
+  )
+}
+
+
 #' Read calibration file
+#'
+#' @param fp file path to the calibration file
+#'
+#' @returns a calibration object with the calibration matrix and associated
+#' metadata
+#' @export
 
 read_config <- function(fp) {
   cfg <- readChar(fp, file.info(fp)$size)
@@ -80,4 +105,3 @@ read_config <- function(fp) {
 
   return(output)
 }
-

@@ -1,0 +1,55 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+<!-- Render to README.md with `devtools::build_readme()` -->
+
+```{r knitr, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# ForcePlatteR
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+The goal of ForcePlatteR is to ...
+
+## Installation
+
+You can install the development version of ForcePlatteR from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("pak")
+pak::pak("crankin-star/ForcePlatteR")
+```
+
+## Example
+
+This is a basic example which shows you how to solve a common problem:
+
+```{r example}
+library(ForcePlatteR)
+
+masses
+cfg <- read_config("calibration_data/A1840_1.acl")
+
+df <- masses$data
+S <- cfg$S
+
+# We can usually get offsets from the GUI selector
+offset <- c(-0.002, -0.169, -0.204, -0.218, 0.006, -0.041, -0.046, -0.017)
+df[-1] <- sweep(df[-1], 2, offset, `-`) # excluding time column
+
+forces <- calculate_forces(df, S)
+
+# plot.force_output(forces, component = "Fz")
+
+```
+
