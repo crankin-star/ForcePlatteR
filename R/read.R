@@ -103,5 +103,7 @@ read_config <- function(fp) {
     read.table(text = _, sep = ",")
   names(output$S) <- paste0("S", 1:8)
 
+  class(output) <- 'acl'
+
   return(output)
 }
