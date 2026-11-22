@@ -164,9 +164,7 @@ weight_interval <- select_range_gui(
 forces <- calculate_forces(df, S)
 ```
 
-5.  Filter high frequencies. Note that the objects returned by
-    low_pass_fourier include the cutoff used, so you’ll need to access
-    the data with `$data`
+5.  Filter high frequencies.
 
 ``` r
 time <- df$Time
