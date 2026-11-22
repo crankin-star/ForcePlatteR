@@ -4,14 +4,7 @@
 \alias{low_pass_fourier}
 \title{Apply a low-pass Fourier filter to a vector}
 \usage{
-low_pass_fourier(time, x, cutoff = 60)
-}
-\arguments{
-\item{time}{a time vector}
-
-\item{x}{a forces vector to be filtered}
-
-\item{cutoff}{a number (in hertz) above which frequencies will be set to 0}
+low_pass_fourier(x, cutoff = 60, ...)
 }
 \description{
 Apply a low-pass Fourier filter to a vector

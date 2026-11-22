@@ -5,7 +5,7 @@
 \alias{A1840}
 \title{A calibration file for analog data collection, saved as an acl object.}
 \format{
-An object of class \code{acl} of length 9.
+An object of class \code{list} of length 9.
 }
 \usage{
 A1840

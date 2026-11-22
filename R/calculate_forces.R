@@ -8,15 +8,15 @@
 #' @returns a force_output object with forces and moments measured.
 #' @export
 calculate_forces <- function(df, S, offset = 0) {
-  df <- df - offset
   time <- df$Time
-
   df <- subset(df, select = -Time) |> as.matrix()
+
+  df <- df - offset
   S <- as.matrix(S)
 
   result <- (df %*% t(S)) |> as.data.frame()
-  colnames(result) <- c("Fx", "Fy", "Fz", "Mx", "My", "Mz")
-  result$Time <- time
+  result <- cbind(time, result)
+  colnames(result) <- c("Time", "Fx", "Fy", "Fz", "Mx", "My", "Mz")
   class(result) <- c("force_output", "data.frame")
   return(result)
 }

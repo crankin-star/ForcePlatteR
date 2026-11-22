@@ -1,10 +1,14 @@
 #' Apply a low-pass Fourier filter to a vector
+#' @export
+low_pass_fourier <- function(x, cutoff = 60, ...) UseMethod("low_pass_fourier")
+
+#' Apply a low-pass Fourier filter to a vector
 #'
 #' @param time a time vector
 #' @param x a forces vector to be filtered
 #' @param cutoff a number (in hertz) above which frequencies will be set to 0
-#' @export
-low_pass_fourier <- function(time, x, cutoff = 60) {
+#' @exportS3Method ForcePlatteR::low_pass_fourier
+low_pass_fourier.default <- function(x, time, cutoff = 60) {
   X <- fft(as.vector(x))
   N <- length(time)
   f <- 1 / (time[2] - time[1])
@@ -16,21 +20,28 @@ low_pass_fourier <- function(time, x, cutoff = 60) {
     }
   }
 
-  output <- Re(fft(X, inverse = TRUE)) / length(X)
-  class(output) <- "fft_filtered"
-  attributes(output)$cutoff = cutoff
-  attributes(output)$time = time
+  x2 <- Re(fft(X, inverse = TRUE)) / length(X)
+
+  output <- structure(
+    x2,
+    class = "fft_filtered",
+    cutoff = cutoff,
+    time = time
+  )
+  # class(output) <- "fft_filtered"
+  # attributes(output)$cutoff = cutoff
+  # attributes(output)$time = time
 
   return(output)
 }
 
-#' Apply a low-pass Fourier filter to a vector
+#' Apply a low-pass Fourier filter to a matrix or dataframe
 #'
 #' @param df a dataframe of values (including time) to be filtered
 #' @param cutoff a number (in hertz) above which frequencies will be set to 0
-#' @export
-low_pass_fourier.df <- function(df, cutoff = 60) {
-  time <- df$Time
+#' @exportS3Method ForcePlatteR::low_pass_fourier
+low_pass_fourier.data.frame <- function(df, cutoff = 60) {
+  time <- df$Time %||% df$time
   data_cols <- df[, colnames(df) != "Time"] |> as.matrix()
   N <- length(time)
   f <- 1 / (time[2] - time[1])
@@ -46,13 +57,19 @@ low_pass_fourier.df <- function(df, cutoff = 60) {
   m[idx, ] <- 0
   m[N + 1 - idx, ] <- 0
 
-  output <- fft(m, inverse = TRUE) |>
+  x2 <- fft(m, inverse = TRUE) |>
     Re() |>
     as.data.frame() / nrow(m)
 
-  output$Time <- time
-  class(output) <- c("fft_filtered_df", "data.frame")
-  attributes(output)$cutoff = cutoff
+  x2 <- cbind(time, x2)
+
+  output <- structure(
+    x2,
+    class = c("fft_filtered_df", "data.frame"),
+    cutoff = cutoff
+  )
+  # class(output) <- c("fft_filtered_df", "data.frame")
+  # attributes(output)$cutoff = cutoff
 
   return(output)
 }
@@ -84,7 +101,7 @@ plot.fft_filtered_df <- function(output, component = c("Fz", "Fx", "Fy", "Mz", "
   component <- match.arg(component)
   cutoff <- attributes(output)$cutoff
   plot(
-    x = output[, "Time"],
+    x = output$Time %||% output$time,
     y = output[, component],
     type = "l",
     main = glue::glue("cutoff={cutoff}"),

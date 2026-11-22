@@ -23,7 +23,7 @@ The goal of ForcePlatteR is to ...
 
 ## Installation
 
-You can install the development version of ForcePlatteR from [GitHub](https://github.com/) with:
+This package is not currently published to CRAN, but you can install the development version of ForcePlatteR from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("pak")
@@ -38,7 +38,7 @@ This is a basic example which shows you how to solve a common problem:
 library(ForcePlatteR)
 
 masses
-A1840
+str(A1840)
 
 df <- masses$data
 S <- A1840$S
@@ -116,7 +116,7 @@ forces[, colnames(forces) != "Time"] |>
   as.data.frame() |>
   head()
 # OR
-filtered_forces <- low_pass_fourier.df(forces)
+filtered_forces <- low_pass_fourier(forces)
 head(filtered_forces)
 ```
 
