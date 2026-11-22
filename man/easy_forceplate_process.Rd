@@ -7,6 +7,7 @@
 easy_forceplate_process(
   data_fp,
   cfg_fp,
+  correct_lbs_to_n = TRUE,
   cutoff = 60,
   channel_to_analyze = "Ch.00",
   fps = NULL
@@ -17,9 +18,13 @@ easy_forceplate_process(
 
 \item{cfg_fp}{file path to the calibration file to analyze}
 
+\item{correct_lbs_to_n}{multiply forces by 4.45 to get values from pounds to Newtons}
+
 \item{cutoff}{cutoff value (in Hz) for the low-pass Fourier filter}
 
 \item{channel_to_analyze}{The channel to display in the offset-selection GUI}
+
+\item{fps}{Currently unused. frames per second used to calculate time column.}
 }
 \value{
 a processed_force_data object containing the original au2 and

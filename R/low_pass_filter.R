@@ -1,3 +1,9 @@
+#' Apply a low-pass Fourier filter to a vector
+#'
+#' @param time a time vector
+#' @param x a forces vector to be filtered
+#' @param cutoff a number (in hertz) above which frequencies will be set to 0
+#' @export
 low_pass_fourier <- function(time, x, cutoff = 60) {
   X <- fft(as.vector(x))
   N <- length(time)
@@ -10,16 +16,20 @@ low_pass_fourier <- function(time, x, cutoff = 60) {
     }
   }
 
-  output <- list(
-    data = Re(fft(X, inverse = TRUE)) / length(X),
-    cutoff = cutoff
-  )
+  output <- Re(fft(X, inverse = TRUE)) / length(X)
   class(output) <- "fft_filtered"
+  attributes(output)$cutoff = cutoff
+  attributes(output)$time = time
 
   return(output)
 }
 
-low_pass_fourier.df <- function(df, cutoff) {
+#' Apply a low-pass Fourier filter to a vector
+#'
+#' @param df a dataframe of values (including time) to be filtered
+#' @param cutoff a number (in hertz) above which frequencies will be set to 0
+#' @export
+low_pass_fourier.df <- function(df, cutoff = 60) {
   time <- df$Time
   data_cols <- df[, colnames(df) != "Time"] |> as.matrix()
   N <- length(time)
@@ -28,14 +38,23 @@ low_pass_fourier.df <- function(df, cutoff) {
 
   m <- mvfft(data_cols)
 
-  for (i in 1:(N / 2)) {
-    if (f * 1 / N > cutoff) {
-      X[i] <- 0
-      X[N - i] <- 0
-    }
-  }
+  N <- nrow(data_cols)
+  i <- seq_len(ceiling((N + 1) / 2))
 
-  df <- cbind(Time = time, mvfft(m, inverse = TRUE))
+  idx <- i[f * i / N > cutoff]
+
+  m[idx, ] <- 0
+  m[N + 1 - idx, ] <- 0
+
+  output <- fft(m, inverse = TRUE) |>
+    Re() |>
+    as.data.frame() / nrow(m)
+
+  output$Time <- time
+  class(output) <- c("fft_filtered_df", "data.frame")
+  attributes(output)$cutoff = cutoff
+
+  return(output)
 }
 
 #' plot filtered data
@@ -45,5 +64,32 @@ low_pass_fourier.df <- function(df, cutoff) {
 #'
 #' @exportS3Method base::plot
 plot.fft_filtered <- function(output, ...) {
-  plot(output$data, type = "l", main = glue::glue("cutoff={output$cutoff}"), ...)
+  cutoff <- attributes(output)$cutoff
+  plot(
+    x = attributes(output)$time,
+    y = output,
+    type = "l",
+    main = glue::glue("cutoff={cutoff}"),
+    ...
+  )
+}
+
+#' plot filtered data
+#'
+#' @param output The data to plot
+#' @param ... other aesthetic information
+#'
+#' @exportS3Method base::plot
+plot.fft_filtered_df <- function(output, component = c("Fz", "Fx", "Fy", "Mz", "Mx", "My"), ...) {
+  component <- match.arg(component)
+  cutoff <- attributes(output)$cutoff
+  plot(
+    x = output[, "Time"],
+    y = output[, component],
+    type = "l",
+    main = glue::glue("cutoff={cutoff}"),
+    ylab = component,
+    xlab = "Time",
+    ...
+  )
 }

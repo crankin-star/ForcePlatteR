@@ -13,9 +13,9 @@
 #'
 #' @importFrom stats as.formula
 #' @export
-select_offsets <- function(data, x, y,
-                           viewer = c("dialog", "browser"),
-                           title = "Select an offset range") {
+select_range_gui <- function(data, x, y,
+                             viewer = c("dialog", "browser"),
+                             title = "Select an offset range") {
   # Validate inputs ---------------------------------------------------
 
   if (!requireNamespace("shiny", quietly = TRUE)) {

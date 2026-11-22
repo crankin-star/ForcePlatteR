@@ -9,6 +9,9 @@ au2_example(path = NULL)
 \arguments{
 \item{path}{the file to be returned. If null, lists possible files.}
 }
+\value{
+a filepath or a character vector of example file names.
+}
 \description{
 List example files or return the filepath for a example file.
 }

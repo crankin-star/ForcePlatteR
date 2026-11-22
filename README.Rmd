@@ -38,10 +38,10 @@ This is a basic example which shows you how to solve a common problem:
 library(ForcePlatteR)
 
 masses
-cfg <- read_config("calibration_data/A1840_1.acl")
+A1840
 
 df <- masses$data
-S <- cfg$S
+S <- A1840$S
 
 # We can usually get offsets from the GUI selector
 offset <- c(-0.002, -0.169, -0.204, -0.218, 0.006, -0.041, -0.046, -0.017)
@@ -50,6 +50,79 @@ df[-1] <- sweep(df[-1], 2, offset, `-`) # excluding time column
 forces <- calculate_forces(df, S)
 
 # plot.force_output(forces, component = "Fz")
+```
 
+## Typical workflow
+
+1. read in your au2 file
+
+```{r}
+fp <- au2_example("jump.au2")
+au2 <- read_au2(fp)
+
+au2
+
+df <- au2$data
+```
+
+2. Find your calibration file or use one of the pre-loaded files (A1840 for analog, D1840 for digital)
+
+```{r}
+cfg <- read_config("calibration_data/A1840_1.acl")
+S <- cfg$S
+```
+
+3. Select the offset interval and weight intervals
+
+```{r, eval=FALSE}
+offset_interval <- select_range_gui(
+  df,
+  x = "Time", y = "Ch.00",
+  viewer = "browser"
+)
+offset <- df[df$Time < offset_interval$upper & df$Time > offset_interval$lower, -1] |>
+  colMeans()
+df[-1] <- sweep(df[-1], 2, offset, `-`)
+
+weight_interval <- select_range_gui(
+  df,
+  x = "Time",
+  y = "Ch.00",
+  viewer = "browser"
+)
+```
+
+```{r, echo = FALSE}
+offset_interval <- list(lower = 1.3412, upper = 2.4084)
+offset <- df[df$Time < offset_interval$upper & df$Time > offset_interval$lower, -1] |>
+  colMeans()
+df[-1] <- sweep(df[-1], 2, offset, `-`)
+```
+
+
+4. Calculate forces
+
+```{r}
+forces <- calculate_forces(df, S)
+```
+
+5. Filter high frequencies. Note that the objects returned by low_pass_fourier include the cutoff used, so you'll need to access the data with `$data`
+
+```{r}
+time <- df$Time
+forces[, colnames(forces) != "Time"] |>
+  lapply(\(x) low_pass_fourier(time = time, x = x, cutoff = 60)) |>
+  do.call(cbind, args = _) |>
+  as.data.frame() |>
+  head()
+# OR
+filtered_forces <- low_pass_fourier.df(forces)
+head(filtered_forces)
+```
+
+6. Visualize and analyze as needed.
+
+```{r}
+plot(filtered_forces, component = "Fz")
 ```
 

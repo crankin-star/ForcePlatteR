@@ -24,7 +24,7 @@ calculate_forces <- function(df, S, offset = 0) {
 #' Plotting for force_output objects
 #' @exportS3Method base::plot
 #' @export
-plot.force_output <- function(x, component = c("Fz", "Fx", "Fy", "Mz", "Mx", "My"), ...){
+plot.force_output <- function(x, component = c("Fz", "Fx", "Fy", "Mz", "Mx", "My"), ...) {
   match.arg(component)
-  plot(x[["Time"]], x[[component]], type = 'l', xlab = "Time (s)", ylab = component, ...)
+  plot(x[["Time"]], x[[component]], type = "l", xlab = "Time (s)", ylab = component, ...)
 }
