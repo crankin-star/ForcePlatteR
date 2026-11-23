@@ -9,6 +9,7 @@ Description: Package for dealing with Force Plate data in the Granatosky
 License: What license is it under?
 Imports: 
     glue,
+    signal,
     stringr
 Suggests:
     htmlwidgets,
@@ -19,4 +20,3 @@ LazyData: true
 Config/roxygen2/version: 8.1.1
 Depends: 
     R (>= 3.5)
-    

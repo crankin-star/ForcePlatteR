@@ -1,4 +1,10 @@
+
+# low-pass fft ------------------------------------------------------------
+
 #' Apply a low-pass Fourier filter to a vector
+#'
+#' @param x vector or dataframe to be filtered
+#' @param cutoff cutoff (in Hertz) to be applied when filtering
 #' @export
 low_pass_fourier <- function(x, cutoff = 60, ...) UseMethod("low_pass_fourier")
 
@@ -109,4 +115,18 @@ plot.fft_filtered_df <- function(output, component = c("Fz", "Fx", "Fy", "Mz", "
     xlab = "Time",
     ...
   )
+}
+
+
+# Butter filters ----------------------------------------------------------
+
+butter_filter <- function(df, sampling_frequency = 2500, frequency_cutoff = 100){
+  # Create Butterworth filter
+  bf <- signal::butter(4, frequency_cutoff / (sampling_frequency / 2), type = "low")
+
+  time <- df$Time %||% df$time
+  datacols <- df[, !colnames(df) %in% c("Time", "time")]
+  lapply(datacols, \(x) signal::filtfilt(bf, x))
+
+  return(data.frame(time, datacols))
 }

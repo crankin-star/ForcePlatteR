@@ -183,3 +183,21 @@ plot(filtered_forces, component = "Fz")
 ```
 
 <img src="man/figures/README-unnamed-chunk-7-1.png" alt="" width="100%" />
+
+## Full GUI process
+
+- upload file
+- select offset
+- select weight
+- select drift range (two ranges: latest zero before action and first
+  zero afterwards)
+- calculations happen in the background
+- download csv/xlsx with forces (and maybe add a checkbox to include
+  moments)
+
+## TODOs
+
+- ask if we have a really good mass, else select weight range on
+  z-forces
+- add ‘all’ or ‘forces’ option to plotting methods to plot all forces at
+  once with different colors.

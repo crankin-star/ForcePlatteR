@@ -98,8 +98,8 @@ read_config <- function(fp) {
     sapply(meta, `[`, 1)
   )
 
-  output$S <- lines[9] |>
-    gsub("COEFFROW[0-9]:", "", x = _) |>
+  output$S <-
+    gsub("COEFFROW[0-9]:", "", x = lines[9]) |>
     read.table(text = _, sep = ",")
   names(output$S) <- paste0("S", 1:8)
 
